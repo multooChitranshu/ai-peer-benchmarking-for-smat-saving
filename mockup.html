@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking RM Dashboard - Simplified</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #fafafa;
+            color: #262730;
+        }
+        
+        .streamlit-header {
+            background: linear-gradient(90deg, #1f4e79, #4a90e2);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            gap: 1.5rem;
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+        }
+        
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1f4e79;
+            border-bottom: 2px solid #e6f3ff;
+            padding-bottom: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        
+        select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        
+        .client-summary {
+            background: #f8fbff;
+            border: 1px solid #e6f3ff;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .summary-title {
+            font-weight: 600;
+            color: #1f4e79;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .summary-label {
+            color: #666;
+        }
+        
+        .summary-value {
+            font-weight: 500;
+            color: #1f4e79;
+        }
+        
+        .analyze-button {
+            background: #4a90e2;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            width: 100%;
+            font-size: 1rem;
+        }
+        
+        .analyze-button:hover {
+            background: #357abd;
+        }
+        
+        .metrics-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #f8fbff, #e6f3ff);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #4a90e2;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f4e79;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .analysis-content {
+            background: #fff;
+            border: 1px solid #e6f3ff;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        
+        .analysis-title {
+            font-weight: 600;
+            color: #1f4e79;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .analysis-text {
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        .reasoning-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .reasoning-header {
+            background: #f8fbff;
+            padding: 0.75rem 1rem;
+            border-radius: 6px 6px 0 0;
+            border: 1px solid #e6f3ff;
+            font-weight: 600;
+            color: #1f4e79;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .reasoning-content {
+            border: 1px solid #e6f3ff;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            padding: 1rem;
+            background: white;
+        }
+        
+        .evidence-item {
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            background: #fafafa;
+            border-left: 3px solid #4a90e2;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .evidence-source {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1f4e79;
+            margin-bottom: 0.25rem;
+        }
+        
+        .evidence-text {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.4;
+        }
+        
+        .kg-insight {
+            background: #e8f5e8;
+            border-left: 3px solid #4CAF50;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .kg-text {
+            font-size: 0.85rem;
+            color: #2e7d32;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="streamlit-header">
+        🏦 RM Intelligence Dashboard
+    </div>
+    
+    <div class="main-container">
+        <!-- Column 1: Query -->
+        <div class="panel">
+            <div class="panel-title">Query</div>
+            
+            <div class="form-group">
+                <label class="form-label">Select Client</label>
+                <select>
+                    <option>Sarah Johnson</option>
+                    <option>Michael Chen</option>
+                    <option>Emma Williams</option>
+                </select>
+            </div>
+            
+            <div class="client-summary">
+                <div class="summary-title">Quick Summary</div>
+                <div class="summary-item">
+                    <span class="summary-label">Annual Income:</span>
+                    <span class="summary-value">$85,000</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Monthly Expenses:</span>
+                    <span class="summary-value">$4,200</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Savings:</span>
+                    <span class="summary-value">$45,000</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Credit Score:</span>
+                    <span class="summary-value">750</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Employment:</span>
+                    <span class="summary-value">Tech Company (3 yrs)</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Custom Query</label>
+                <textarea placeholder="What is the risk assessment for a personal loan of $50,000?">What is the risk assessment for a personal loan of $50,000?</textarea>
+            </div>
+            
+            <button class="analyze-button">🔍 Analyze Client</button>
+        </div>
+        
+        <!-- Column 2: Analysis Results -->
+        <div class="panel">
+            <div class="panel-title">Analysis Results</div>
+            
+            <div class="metrics-row">
+                <div class="metric-card">
+                    <div class="metric-value">7.2</div>
+                    <div class="metric-label">Risk Score</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">$35K</div>
+                    <div class="metric-label">Max Recommended</div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <div class="analysis-title">Personal Loan Assessment</div>
+                <div class="analysis-text">
+                    Based on Sarah's financial profile, she qualifies for a personal loan with moderate risk. Her stable income from a tech company, good credit score of 750, and healthy savings indicate strong repayment capability.
+                    <br><br>
+                    <strong>Recommendation:</strong> Approve personal loan up to $35,000 at standard interest rate. Her debt-to-income ratio would remain within acceptable limits at 28%.
+                    <br><br>
+                    <strong>Risk Factors:</strong> Consider the current tech market volatility and ensure loan terms include flexible payment options.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Column 3: Evidence & Reasoning -->
+        <div class="panel">
+            <div class="panel-title">Evidence & Reasoning</div>
+            
+            <div class="reasoning-section">
+                <div class="reasoning-header">
+                    🕸️ Intelligent Reasoning
+                </div>
+                <div class="reasoning-content">
+                    <div class="kg-insight">
+                        <div class="kg-text">
+                            <strong>Employment Stability:</strong> Connected to stable tech sector with 3+ year tenure at current company
+                        </div>
+                    </div>
+                    <div class="kg-insight">
+                        <div class="kg-text">
+                            <strong>Financial Behavior:</strong> Consistent savings pattern shows disciplined financial management
+                        </div>
+                    </div>
+                    <div class="kg-insight">
+                        <div class="kg-text">
+                            <strong>Credit Profile:</strong> No missed payments in knowledge graph data, strong credit relationships
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="reasoning-section">
+                <div class="reasoning-header">
+                    📄 Supporting Documents
+                </div>
+                <div class="reasoning-content">
+                    <div class="evidence-item">
+                        <div class="evidence-source">Client Email - Dec 2024</div>
+                        <div class="evidence-text">
+                            "Planning to consolidate some high-interest debt and looking for loan options..."
+                        </div>
+                    </div>
+                    <div class="evidence-item">
+                        <div class="evidence-source">Pay Stub Analysis - Nov 2024</div>
+                        <div class="evidence-text">
+                            Consistent monthly income of $7,083 with regular bonuses, indicating stable employment
+                        </div>
+                    </div>
+                    <div class="evidence-item">
+                        <div class="evidence-source">Bank Statement - Oct 2024</div>
+                        <div class="evidence-text">
+                            Regular savings deposits and controlled spending patterns show financial discipline
+                        </div>
+                    </div>
+                    <div class="evidence-item">
+                        <div class="evidence-source">Tech Industry Report - Nov 2024</div>
+                        <div class="evidence-text">
+                            Client's company sector showing stable growth despite market headwinds
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
